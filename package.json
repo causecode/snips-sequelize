@@ -1,0 +1,23 @@
+{
+    "name": "snips-sequelize",
+    "displayName": "snips-sequelize",
+    "version": "0.0.1",
+    "description": "A snippet pack to make you more productive working with Sequelize",
+    "publisher": "causecode",
+    "author": "CauseCode Technologies",
+    "license": "MIT",
+    "engines": {
+        "vscode": "^1.19.0"
+    },
+    "categories": [
+        "Snippets"
+    ],
+    "contributes": {
+        "snippets": [
+            {
+                "language": "typescript",
+                "path": "./snippets/typescript.json"
+            }
+        ]
+    }
+}
