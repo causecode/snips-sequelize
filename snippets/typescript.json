@@ -1,0 +1,115 @@
+{
+    "Create Sequelize Model": {
+        "prefix": "model",
+        "body": [
+            "import * as Sequelize from 'sequelize';\n",
+            "export interface I${TM_FILENAME_BASE}Attribute {",
+            "\t// Add your interface here \n}\n",
+            "export interface I${TM_FILENAME_BASE}Instance extends Sequelize.Instance<I${TM_FILENAME_BASE}Attribute>, I${TM_FILENAME_BASE}Attribute {\n\n}\n",
+            "export const ${TM_FILENAME_BASE} = (sequelize: Sequelize.Sequelize): Sequelize.Model<I${TM_FILENAME_BASE}Instance, I${TM_FILENAME_BASE}Attribute> => {",
+            "\tconst ${TM_FILENAME_BASE} = sequelize.define<I${TM_FILENAME_BASE}Instance, I${TM_FILENAME_BASE}Attribute>('${2:${TM_FILENAME/(.*)\\.ts/${1:/downcase}/}}', {\n",
+            "\t\t// name: {\n\t\t//\ttype: Sequelize.STRING,\n\t\t//\tallowNull: false\n\t\t//}\n\n\t\t${0}\n",
+            "\t});\n",
+            "\t// Add your associations here",
+            "\t// ${TM_FILENAME_BASE}[`associate`] = (models: {[index: string]: Sequelize.Model<Sequelize.Instance<any>, any>}) => {",
+            "\t//\t${TM_FILENAME_BASE}.hasMany(models[`foreignTable`]);",
+            "\t//}\n",
+            "\treturn ${TM_FILENAME_BASE};\n}\n"
+        ],
+        "description": "Boilerplate for sequelize model"
+    },
+
+    "Create Sequelize MockModel": {
+        "prefix": "mockmodel",
+        "body": [
+            "const SequelizeMock = require('sequelize-mock');",
+            "const DBConnectionMock = new SequelizeMock();\n",
+            "export const ${TM_FILENAME_BASE}Mock = DBConnectionMock.define('${TM_FILENAME/(.*)\\.ts/${1:/downcase}/}', {}, {instanceMethods: {",
+            "\t\tupdate: jest.fn(),\n\t\tdestroy: jest.fn(()=>{}),\n\t}\n});",
+            "export const ${TM_FILENAME_BASE} = () => ${TM_FILENAME_BASE}Mock;\n",
+            "${TM_FILENAME_BASE}Mock.create = jest.fn((params: {readableId: string}) => {",
+            "\treturn new Promise((resolve, reject) => {",
+            "\t\tif(params.readableId === 'TEST001') {",
+            "\t\t\tresolve(${TM_FILENAME_BASE}Mock.build());\n\t\t} else {",
+            "\t\t\treject(new Error('Some error occured'));\n\t\t}\n\t});\n});\n",
+            "${TM_FILENAME_BASE}Mock.findAndCountAll = jest.fn((params: {limit: number, offset: number}) => {",
+            "\treturn new Promise((resolve, reject) => {",
+            "\t\tif (params.limit <= -1 || params.offset <= -1) {",
+            "\t\t\treject(new Error('No such ${TM_FILENAME_BASE} found.'));",
+            "\t\t} else {\n\t\t\tresolve([${TM_FILENAME_BASE}Mock.build(), 1]);",
+            "\t\t}\n\t})\n})\n",
+            "${TM_FILENAME_BASE}Mock.findById = jest.fn((id: number) => {",
+            "\treturn new Promise((resolve, reject) => {",
+            "\t\tif(id >= 1) {\n\t\t\tresolve(${TM_FILENAME_BASE}Mock.build());",
+            "\t\t} else {\n\t\t\treject(new Error('Some error occured'));",
+            "\t\t}\n\t});\n});\n${TM_FILENAME_BASE}Mock.associate = () => {};\n"
+        ],
+        "description": "Boilerplate for sequelize mock model"
+    },
+
+    "Create Sequelize Service": {
+        "prefix": "service",
+        "body": [
+            "import * as Sequelize from 'sequelize';\nimport * as Bluebird from 'bluebird';",
+            "import {CreateOptions} from 'sequelize';\nimport {sequelize} from '../models';",
+            "import {QUERY, MAX, OFFSET, SORT} from '../constants';",
+            "import {I${TM_FILENAME_BASE}Attributes, I${TM_FILENAME_BASE}Instance} from '../models/${TM_FILENAME_BASE}';",
+            "import {IUpdate${TM_FILENAME_BASE}Body} from '../lambdas/${TM_FILENAME_BASE}';\n",
+            "const ${TM_FILENAME_BASE}: Sequelize.Model<I${TM_FILENAME_BASE}Instance,I${TM_FILENAME_BASE}Attributes> = sequelize[`${TM_FILENAME_BASE}`];\n",
+            "export const create = (params: I${TM_FILENAME_BASE}Attributes, options?: CreateOptions) => {",
+            "\treturn ${TM_FILENAME_BASE}.create({...params}, options)\n}\n",
+            "export const list = (query: string = QUERY, max: number = MAX, offset: number = OFFSET, sort: string = SORT) => {",
+            "\treturn ${TM_FILENAME_BASE}.findAndCountAll({\n\t\tlimit: max,\n\t\toffset,",
+            "\t\torder: [['updatedAt', sort.toUpperCase()]],\n\t\twhere: {\n\t\t\treadableId: {",
+            "\t\t\t\t[Sequelize.Op.iLike]: `%\\${query\\}%`\n\t\t\t}\n\t\t}\n\t})\n}\n",
+            "export const updateById = (id: number, data: IUpdate${TM_FILENAME_BASE}Body): Bluebird<I${TM_FILENAME_BASE}Instance> => {",
+            "\treturn findById(id)",
+            "\t\t.then((${TM_FILENAME/(.*)\\.ts/${1:/downcase}/}: I${TM_FILENAME_BASE}Instance) => {",
+            "\t\t\treturn ${TM_FILENAME/(.*)\\.ts/${1:/downcase}/}.update(data)",
+            "\t\t})\n}\n\nexport const findById = (id: number): Bluebird<I${TM_FILENAME_BASE}Instance | null> => {",
+            "\treturn ${TM_FILENAME_BASE}.findById(id);\n}\n\nexport const deleteById = (id: number): Bluebird<void> => {\n\treturn findById(id)",
+            "\t\t.then((${TM_FILENAME/(.*)\\.ts/${1:/downcase}/}: I${TM_FILENAME_BASE}Instance) => {",
+            "\t\t\treturn ${TM_FILENAME/(.*)\\.ts/${1:/downcase}/}.destroy()",
+            "\t\t})\n};\n"
+        ],
+        "description": "Boilerplate for sequelize service"
+    },
+
+    "Create Sequelize MockService": {
+        "prefix": "mockservice",
+        "body": [
+            "import * as Bluebird from 'bluebird';",
+            "import {${TM_FILENAME_BASE}Mock} from '../../models/__mocks__/${TM_FILENAME_BASE}';",
+            "import {I${TM_FILENAME_BASE}Instance, I${TM_FILENAME_BASE}Attributes} from '../../models/${TM_FILENAME_BASE}';",
+            "import {IUpdate${TM_FILENAME_BASE}Body} from '../../lambdas/${TM_FILENAME_BASE}';\n",
+            "export const create = jest.fn((params: I${TM_FILENAME_BASE}Attributes): Bluebird<I${TM_FILENAME_BASE}Instance> => {\n",
+            "\treturn new Bluebird((resolve, reject): void => {",
+            "\t\tif (params.readableId === 'valid' && params.name) {",
+            "\t\t\tresolve(${TM_FILENAME_BASE}Mock.build());\n\t\t} else {",
+            "\t\t\treject(new Error('${TM_FILENAME_BASE}Mock#create - mock error'));\n\t\t}\n\t})\n})\n",
+            "export const list = jest.fn((query: string, max: number, offset: number, sort: string):",
+            "\t\tBluebird<{rows: I${TM_FILENAME_BASE}Instance[], count: number}> => {\n",
+            "\treturn new Bluebird((resolve, reject): void => {",
+            "\t\tif (query === 'match') {\n\t\t\tresolve({rows: ${TM_FILENAME_BASE}Mock.build(), count: 1});",
+            "\t\t} else {\n\t\t\treject(new Error('${TM_FILENAME_BASE}Mock#list - mock error'));\n\t\t}\n\t})\n})\n",
+            "export const updateById = jest.fn((id: number, data: IUpdate${TM_FILENAME_BASE}Body): Bluebird<I${TM_FILENAME_BASE}Instance> => {",
+            "\treturn new Bluebird((resolve, reject): void => {",
+            "\t\tif (id >= 1 && data) {",
+            "\t\t\tresolve(${TM_FILENAME_BASE}Mock.build());",
+            "\t\t} else {\n\t\t\treject(new Error('${TM_FILENAME_BASE}Mock#updateById - mock error'));",
+            "\t\t}\n\t});\n});\n",
+            "export const findById = jest.fn((id: number): Bluebird<I${TM_FILENAME_BASE}Instance> => {",
+            "\treturn new Bluebird((resolve, reject): void => {",
+            "\t\tif (id >= 1 && id <= 10) {",
+            "\t\t\tresolve(${TM_FILENAME_BASE}Mock.build());",
+            "\t\t} else if (id > 10) {\n\t\t\tresolve();\n\t\t} else {",
+            "\t\t\treject(new Error('${TM_FILENAME_BASE}Mock#findById - mock error'));\n\t\t}\n\t});\n});\n",
+            "export const deleteById = jest.fn((id: number): Bluebird<void> => {",
+            "\treturn new Bluebird((resolve, reject): void => {",
+            "\t\tif (id >= 1) {\n\t\t\tresolve();\n\t\t} else {",
+            "\t\t\treject(new Error('${TM_FILENAME_BASE}Mock#deleteById - mock error'));",
+            "\t\t}\n\t});\n});\n"
+        ],
+        "description": "Boilerplate for sequelize mock service"
+    }
+}
