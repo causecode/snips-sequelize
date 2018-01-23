@@ -1,0 +1,35 @@
+{
+    "name": "snips-sequelize",
+    "displayName": "snips-sequelize",
+    "version": "0.0.1",
+    "description": "A snippet pack to make you more productive working with Sequelize",
+    "publisher": "causecode",
+    "author": "CauseCode Technologies",
+    "license": "SEE LICENSE IN LICENSE.md",
+    "engines": {
+        "vscode": "^1.19.0"
+    },
+    "categories": [
+        "Snippets"
+    ],
+    "icon": "images/causecode-logo.png",
+    "galleryBanner": {
+        "color": "#0273D4",
+        "theme": "dark"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/causecode/snips-sequelize.git"
+    },
+    "bugs": {
+        "url": "https://github.com/causecode/snips-sequelize/issues"
+    },
+    "contributes": {
+        "snippets": [
+            {
+                "language": "typescript",
+                "path": "./snippets/typescript.json"
+            }
+        ]
+    }
+}
